@@ -3,6 +3,7 @@ import React from "react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import LandingPageStats from "./layout/landing-page-stats/LandingPageStats";
+import Testimonials from "./layout/testimonials/Testimonials";
 
 const Home = () => {
   return (
@@ -57,11 +58,12 @@ const Home = () => {
           </Button>
         </a>
       </div>
-      
+
       <LandingPageStats />
+      <Testimonials />
       {/* 
 
-      <Testimonials />
+
       <Pricing />
       <InterviewProcessCards />
       */}
