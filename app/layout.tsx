@@ -34,7 +34,11 @@ export default function RootLayout({
             attribute: "class",
           }}
         >
-          {children}
+          <div className="relative flex flex-col h-screen">
+            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+              {children}
+            </main>
+          </div>
         </Providers>
       </body>
     </html>

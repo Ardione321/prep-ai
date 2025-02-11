@@ -1,10 +1,9 @@
-// app/page.tsx
-import { Button } from "@heroui/button";
+import Home from "@/components/Home";
 
 export default function Page() {
   return (
     <div>
-      <Button>Click me</Button>
+      <Home />
     </div>
   );
 }
