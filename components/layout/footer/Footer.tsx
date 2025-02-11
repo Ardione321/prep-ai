@@ -1,6 +1,7 @@
 "use client ";
 
 import { Logo } from "@/config/Logo";
+import { siteConfig } from "@/config/site";
 import Link from "next/link";
 
 export default function Footer() {
@@ -9,7 +10,7 @@ export default function Footer() {
       <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
         <Link href="#" className="flex items-center gap-2" prefetch={false}>
           <Logo />
-          <span className="text-lg font-semibold">Prep AI</span>
+          <span className="text-lg font-semibold">{siteConfig?.name}</span>
         </Link>
         <nav className="flex flex-wrap items-center justify-center gap-4 text-sm md:justify-end">
           <Link
@@ -42,7 +43,8 @@ export default function Footer() {
           </Link>
         </nav>
         <p className="text-xs text-muted-foreground">
-          &copy; {} Prep AI. All rights reserved. 2025
+          &copy; {siteConfig?.description} Prep AI. All rights reserved.{" "}
+          {new Date().getFullYear()}
         </p>
       </div>
     </footer>
