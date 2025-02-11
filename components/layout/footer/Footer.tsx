@@ -1,6 +1,6 @@
 "use client ";
 
-import { Logo } from "@/config/logo";
+import { Logo } from "@/config/Logo";
 import Link from "next/link";
 
 export default function Footer() {
