@@ -1,6 +1,7 @@
 import React from "react";
 import { User } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { testimonials } from "@/constants/constants";
 
 export default function Testimonials() {
   return (
@@ -12,35 +13,46 @@ export default function Testimonials() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 mt-10">
-        <div className="rounded-medium bg-content1 p-5 shadow-small">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <User
-                avatarProps={{
-                  src: "avatar1.jpg",
-                }}
-                classNames={{
-                  name: "font-medium",
-                  description: "text-small",
-                }}
-                name="Test user"
-              />
-            </div>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }, (_, i) => (
-                <Icon
-                  key={i}
-                  className={"text-warning"}
-                  icon="solar:star-bold"
+        {testimonials?.map((testimonial, index) => (
+          <div
+            key={index}
+            className="rounded-medium bg-content1 p-5 shadow-small"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <User
+                  avatarProps={{
+                    src: testimonial?.user?.avatar,
+                  }}
+                  classNames={{
+                    name: "font-medium",
+                    description: "text-small",
+                  }}
+                  name={testimonial?.user?.name}
                 />
-              ))}
+              </div>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <Icon
+                    key={i}
+                    className={
+                      i + 1 <= testimonial?.rating
+                        ? "text-warning"
+                        : "text-default-500"
+                    }
+                    icon="solar:star-bold"
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 w-full">
+              <p className="font-medium text-default-900">
+                {testimonial?.title}
+              </p>
+              <p className="mt-2 text-default-500">{testimonial?.content}</p>
             </div>
           </div>
-          <div className="mt-4 w-full">
-            <p className="font-medium text-default-900">Title</p>
-            <p className="mt-2 text-default-500">Content</p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
