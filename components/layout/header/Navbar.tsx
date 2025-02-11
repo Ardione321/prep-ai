@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import NextLink from "next/link";
 
-import { Logo } from "@/config/logo";
+import { Logo } from "@/config/Logo";
 import HeaderUser from "./HeaderUser";
 import { Button, Link, User } from "@heroui/react";
 import { Icon } from "@iconify/react";
