@@ -21,8 +21,6 @@ export default function Register() {
       data.email as string,
       data.password as string
     );
-
-    console.log(res);
   };
 
   return (
