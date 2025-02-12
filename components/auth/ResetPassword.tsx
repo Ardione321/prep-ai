@@ -3,7 +3,7 @@
 import React from "react";
 import { Button, Input, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { Logo } from "@/config/logo";
+import { Logo } from "@/config/Logo";
 
 export default function ResetPassword() {
   const [isVisible, setIsVisible] = React.useState(false);
