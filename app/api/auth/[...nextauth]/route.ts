@@ -18,7 +18,9 @@ const options = {
       async authorize(credentials) {
         await dbConnect();
 
-        const user = await User.findOne({ email: credentials?.email });
+        const user = await User.findOne({ email: credentials?.email }).select(
+          "+password"
+        );
 
         if (!user) {
           throw new Error("Invalid Email or Password");
@@ -38,6 +40,19 @@ const options = {
   ],
   session: {
     strategy: "jwt" as const,
+  },
+  callbacks: {
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.user = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }: any) {
+      session.user = token.user;
+      delete session.user.password;
+      return session;
+    },
   },
   pages: {
     signIn: "/login",
