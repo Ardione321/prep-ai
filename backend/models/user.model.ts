@@ -1,5 +1,6 @@
 import { userRoles } from "@/constants/constants";
 import mongoose, { Document } from "mongoose";
+import bcrypt from "bcryptjs";
 
 export interface IUser extends Document {
   _id: string;
@@ -86,6 +87,19 @@ const userSchema = new mongoose.Schema<IUser>(
     timestamps: true,
   }
 );
+
+// Encrypt password before saving user
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    next();
+  }
+
+  if (this.password) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  next();
+});
 
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 export default User;

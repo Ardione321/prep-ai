@@ -11,6 +11,8 @@
   "dependencies": {
     "@heroui/react": "^2.6.14",
     "@iconify/react": "^5.2.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^2.4.3",
     "framer-motion": "^12.4.1",
     "mongoose": "^8.10.0",
     "next": "15.1.6",
