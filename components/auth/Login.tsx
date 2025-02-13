@@ -21,11 +21,16 @@ export default function Login() {
       callbackUrl: "/app/dashboard",
     });
 
-    console.log(res);
   };
 
   const handleGithubLogin = async () => {
     await signIn("github", {
+      callbackUrl: "/app/dashboard",
+    });
+  };
+
+  const handleGoogleLogin = async () => {
+    await signIn("google", {
       callbackUrl: "/app/dashboard",
     });
   };
@@ -98,6 +103,7 @@ export default function Login() {
           <Button
             startContent={<Icon icon="flat-color-icons:google" width={24} />}
             variant="bordered"
+            onPress={handleGoogleLogin}
           >
             Continue with Google
           </Button>

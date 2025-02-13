@@ -24,7 +24,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data, status } = useSession();
   const user = data?.user as IUser;
-  console.log(user);
+
   return (
     <HeroUINavbar
       maxWidth="xl"
