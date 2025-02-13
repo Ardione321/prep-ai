@@ -16,7 +16,7 @@ import { Logo } from "@/config/Logo";
 import HeaderUser from "./HeaderUser";
 import { Button, Link, User } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { IUser } from "@/backend/models/user.model";
 import { useState } from "react";
 
@@ -154,7 +154,13 @@ const Navbar = () => {
         </NavbarMenuItem>
 
         <NavbarMenuItem>
-          <Link color={"danger"} as={Link} size="lg" className="flex gap-1">
+          <Link
+            color={"danger"}
+            as={Link}
+            size="lg"
+            className="flex gap-1"
+            onPress={() => signOut()}
+          >
             <Icon icon="tabler:logout-2" /> Logout
           </Link>
         </NavbarMenuItem>

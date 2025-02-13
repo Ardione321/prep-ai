@@ -8,6 +8,7 @@ import {
 import { User } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { IUser } from "@/backend/models/user.model";
+import { signOut } from "next-auth/react";
 
 const HeaderUser = ({ user }: { user: IUser }) => {
   return (
@@ -50,6 +51,7 @@ const HeaderUser = ({ user }: { user: IUser }) => {
             key="logout"
             color="danger"
             startContent={<Icon icon="tabler:logout-2" />}
+            onPress={() => signOut()}
           >
             Logout
           </DropdownItem>
