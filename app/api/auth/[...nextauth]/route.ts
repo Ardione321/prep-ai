@@ -21,6 +21,7 @@ const options = {
         const user = await User.findOne({ email: credentials?.email }).select(
           "+password"
         );
+
         if (!user) {
           throw new Error("Invalid Email or Password");
         }

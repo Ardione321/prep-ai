@@ -18,15 +18,20 @@ import { Button, Link, User } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useSession } from "next-auth/react";
 import { IUser } from "@/backend/models/user.model";
+import { useState } from "react";
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data, status } = useSession();
-
-  console.log(data);
   const user = data?.user as IUser;
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar
+      maxWidth="xl"
+      position="sticky"
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -90,19 +95,39 @@ const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <NavbarMenuToggle aria-label="Open menu" />
+        {data?.user ? (
+          <NavbarMenuToggle aria-label="Open menu" />
+        ) : (
+          data === null && (
+            <NavbarItem>
+              <Button
+                className="bg-foreground font-medium text-background px-5"
+                color="secondary"
+                endContent={<Icon icon="solar:alt-arrow-right-linear" />}
+                radius="full"
+                variant="flat"
+                as={Link}
+                href="/login"
+              >
+                Login
+              </Button>
+            </NavbarItem>
+          )
+        )}
       </NavbarContent>
 
-      <NavbarMenu className="pt-16">
+      <NavbarMenu className="pt-16 gap-4">
         <User
           as="button"
           avatarProps={{
             isBordered: true,
-            src: "/images/default_user.png",
+            src: user?.profilePicture?.url
+              ? user?.profilePicture?.url
+              : "/images/default_user.png",
           }}
-          className="transition-transform mb-5"
-          description="john.doe@example.com"
-          name="John Doe"
+          className="transition-transform pb-5"
+          description={user?.email}
+          name={user?.name}
         />
         <NavbarMenuItem>
           <Link
@@ -110,6 +135,7 @@ const Navbar = () => {
             href="/admin/dashboard"
             size="lg"
             className="flex gap-1"
+            onPress={() => setIsMenuOpen(false)}
           >
             <Icon icon="tabler:user-cog" /> Admin Dashboard
           </Link>
@@ -121,6 +147,7 @@ const Navbar = () => {
             href="/app/dashboard"
             size="lg"
             className="flex gap-1"
+            onPress={() => setIsMenuOpen(false)}
           >
             <Icon icon="hugeicons:ai-brain-04" /> App Dashboard
           </Link>
