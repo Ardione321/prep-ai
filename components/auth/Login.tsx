@@ -18,9 +18,16 @@ export default function Login() {
       redirect: false,
       email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
+      callbackUrl: "/app/dashboard",
     });
 
     console.log(res);
+  };
+
+  const handleGithubLogin = async () => {
+    await signIn("github", {
+      callbackUrl: "/app/dashboard",
+    });
   };
 
   return (
@@ -99,6 +106,7 @@ export default function Login() {
               <Icon className="text-default-500" icon="fe:github" width={24} />
             }
             variant="bordered"
+            onPress={handleGithubLogin}
           >
             Continue with Github
           </Button>

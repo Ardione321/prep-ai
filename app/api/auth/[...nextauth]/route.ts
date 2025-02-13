@@ -2,6 +2,7 @@ import dbConnect from "@/backend/config/dbConnect";
 import User from "@/backend/models/user.model";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GitHubProvider from "next-auth/providers/github";
 
 const options = {
   providers: [
@@ -37,6 +38,10 @@ const options = {
         return user;
       },
     }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
   ],
   session: {
     strategy: "jwt" as const,
@@ -58,7 +63,7 @@ const options = {
             profilePicture: {
               url: profile?.image || user?.image,
             },
-            authProvider: [
+            authProviders: [
               {
                 provider: account?.provider,
                 providerId: account?.id || profile?.id,
@@ -78,6 +83,14 @@ const options = {
     async jwt({ token, user }: any) {
       if (user) {
         token.user = user;
+      } else {
+        await dbConnect();
+
+        const dbUser = await User.findById(token.user.id);
+
+        if (dbUser) {
+          token.user = dbUser;
+        }
       }
 
       return token;
