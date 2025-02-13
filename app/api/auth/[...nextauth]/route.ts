@@ -42,15 +42,51 @@ const options = {
     strategy: "jwt" as const,
   },
   callbacks: {
+    async signIn({ user, account, profile }: any) {
+      await dbConnect();
+
+      if (account?.provider === "credentials") {
+        user.id = user?._id;
+      } else {
+        // Handle social login
+        const existingUser = await User.findOne({ email: user?.email });
+
+        if (!existingUser) {
+          const newUser = new User({
+            email: user?.email,
+            name: user?.name,
+            profilePicture: {
+              url: profile?.image || user?.image,
+            },
+            authProvider: [
+              {
+                provider: account?.provider,
+                providerId: account?.id || profile?.id,
+              },
+            ],
+          });
+
+          await newUser.save();
+          user.id = newUser._id;
+        } else {
+          user.id = existingUser._id;
+        }
+      }
+
+      return true;
+    },
     async jwt({ token, user }: any) {
       if (user) {
         token.user = user;
       }
+
       return token;
     },
     async session({ session, token }: any) {
       session.user = token.user;
+
       delete session.user.password;
+
       return session;
     },
   },
