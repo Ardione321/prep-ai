@@ -21,7 +21,6 @@ const options = {
         const user = await User.findOne({ email: credentials?.email }).select(
           "+password"
         );
-
         if (!user) {
           throw new Error("Invalid Email or Password");
         }
@@ -44,7 +43,7 @@ const options = {
   callbacks: {
     async jwt({ token, user }: any) {
       if (user) {
-        token.user = user.id;
+        token.user = user;
       }
       return token;
     },
