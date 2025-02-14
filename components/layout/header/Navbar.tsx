@@ -21,7 +21,7 @@ import { IUser } from "@/backend/models/user.model";
 import { useState } from "react";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data, status } = useSession();
   const user = data?.user as IUser;
 

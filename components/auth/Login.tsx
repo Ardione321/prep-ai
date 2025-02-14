@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input, Link, Form, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Logo } from "@/config/Logo";
 import { signIn } from "next-auth/react";
 
 export default function Login() {
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -20,7 +20,6 @@ export default function Login() {
       password: e.currentTarget.password.value,
       callbackUrl: "/app/dashboard",
     });
-
   };
 
   const handleGithubLogin = async () => {
