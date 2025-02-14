@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import dbConnect from "../config/dbConnect";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError";
 import User from "../models/user.model";
@@ -147,7 +148,7 @@ export const forgotUserPassword = catchAsyncErrors(
     }
 
     const resetToken = user.getResetPasswordToken();
-    await user.save;
+    await user.save();
 
     const resetUrl = `${process.env.NEXTAUTH_URL}/password/reset/${resetToken}`;
     const message = resetPasswordHTMLTemplate(user?.name, resetUrl);
@@ -166,5 +167,50 @@ export const forgotUserPassword = catchAsyncErrors(
       throw new Error("Email could not be sent");
     }
     return { emailSent: true };
+  }
+);
+
+/**
+ * Resets a user's password given a valid reset token
+ * and if the passwords match.
+ * @param token - The reset token provided by the user.
+ * @param password - The new password to set.
+ * @param confirmPassword - Confirmation of the new password.
+ * @returns Promise indicating whether the password was updated.
+ */
+export const resetUserPassword = catchAsyncErrors(
+  async (
+    token: string,
+    password: string,
+    confirmPassword: string
+  ): Promise<{ passwordUpdated: boolean }> => {
+    await dbConnect();
+
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      throw new Error("Invalid token or token expired");
+    }
+
+    if (password !== confirmPassword) {
+      throw new Error("Password do not match");
+    }
+
+    user.password = password;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    return { passwordUpdated: true };
   }
 );

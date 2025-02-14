@@ -6,6 +6,7 @@
 import {
   forgotUserPassword,
   register,
+  resetUserPassword,
   updateUserPassword,
   updateUserProfile,
 } from "@/backend/controller/auth.controller";
@@ -92,5 +93,22 @@ export async function updatePassword({
  */
 export async function forgotPassword(email: string) {
   const result = await forgotUserPassword(email);
+  return result;
+}
+
+/**
+ * Resets a user's password given a valid reset token
+ * and if the passwords match.
+ * @param token - The reset token provided by the user.
+ * @param password - The new password to set.
+ * @param confirmPassword - Confirmation of the new password.
+ * @returns The result of the password reset process.
+ */
+export async function resetPassword(
+  token: string,
+  password: string,
+  confirmPassword: string
+) {
+  const result = await resetUserPassword(token, password, confirmPassword);
   return result;
 }

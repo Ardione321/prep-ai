@@ -4,13 +4,36 @@ import React, { useState } from "react";
 import { Button, Input, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Logo } from "@/config/Logo";
+import { useGenericSubmitHandler } from "../form/genericSubmitHandler";
+import toast from "react-hot-toast";
+import { resetPassword } from "@/actions/auth.actions";
+import { useRouter } from "next/navigation";
 
-export default function ResetPassword() {
+export default function ResetPassword({ token }: { token: string }) {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false);
 
+  const router = useRouter();
+
   const toggleVisibility = () => setIsVisible(!isVisible);
   const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
+
+  const { handleSubmit, loading } = useGenericSubmitHandler(async (data) => {
+    const res = await resetPassword(
+      token,
+      data.newPassword,
+      data.confirmPassword
+    );
+
+    if (res?.error) {
+      return toast.error(res?.error?.message);
+    }
+
+    if (res?.passwordUpdated) {
+      toast.success("Password reset successfully");
+      router.push("/login");
+    }
+  });
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -23,7 +46,11 @@ export default function ResetPassword() {
           </p>
         </div>
 
-        <Form className="flex flex-col gap-3" validationBehavior="native">
+        <Form
+          className="flex flex-col gap-3"
+          validationBehavior="native"
+          onSubmit={handleSubmit}
+        >
           <Input
             isRequired
             endContent={
@@ -77,6 +104,8 @@ export default function ResetPassword() {
             color="primary"
             type="submit"
             endContent={<Icon icon="akar-icons:arrow-right" />}
+            isDisabled={loading}
+            isLoading={loading}
           >
             Reset
           </Button>
