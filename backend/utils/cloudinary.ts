@@ -1,0 +1,37 @@
+import cloudinary from "cloudinary";
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const upload_file = async (
+  file: string,
+  folder: string
+): Promise<{ public_id: string; url: string }> => {
+  try {
+    const result = await cloudinary.v2.uploader.upload(file, {
+      resource_type: "auto",
+      folder,
+    });
+    return {
+      public_id: result.public_id,
+      url: result.secure_url,
+    };
+  } catch (error) {
+    throw new Error("Upload failed");
+  }
+};
+
+const delete_file = async (publicId: string): Promise<boolean> => {
+  const res = await cloudinary.v2.uploader.destroy(publicId);
+
+  if (res?.result === "ok") {
+    return true;
+  }
+
+  return false;
+};
+
+export { upload_file, delete_file };
