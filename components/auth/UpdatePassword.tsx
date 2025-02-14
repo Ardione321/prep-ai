@@ -3,13 +3,37 @@
 import React, { useState } from "react";
 import { Button, Input, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { useSession } from "next-auth/react";
+import { useGenericSubmitHandler } from "../form/genericSubmitHandler";
+import { updatePassword } from "@/actions/auth.actions";
+import toast from "react-hot-toast";
 
 export default function UpdatePassword() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false);
 
+  const session = useSession();
+
   const toggleVisibility = () => setIsVisible(!isVisible);
   const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
+
+  const { handleSubmit, loading } = useGenericSubmitHandler(async (data) => {
+    const { newPassword, confirmPassword } = data;
+    const bodyData = {
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+      userEmail: session?.data?.user?.email || "",
+    };
+    const res = await updatePassword(bodyData);
+
+    if (res?.error) {
+      return toast.error(res?.error?.message);
+    }
+
+    if (res?.updated) {
+      toast.success("Password updated successfully");
+    }
+  });
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -21,7 +45,11 @@ export default function UpdatePassword() {
           </p>
         </div>
 
-        <Form className="flex flex-col gap-3" validationBehavior="native">
+        <Form
+          className="flex flex-col gap-3"
+          validationBehavior="native"
+          onSubmit={handleSubmit}
+        >
           <Input
             isRequired
             endContent={
@@ -75,6 +103,8 @@ export default function UpdatePassword() {
             color="primary"
             type="submit"
             endContent={<Icon icon="akar-icons:arrow-right" />}
+            isDisabled={loading}
+            isLoading={loading}
           >
             Update
           </Button>
