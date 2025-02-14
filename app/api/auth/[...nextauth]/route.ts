@@ -109,9 +109,7 @@ const options = {
         token.user = user;
       } else {
         await dbConnect();
-
-        const dbUser = await User.findById(token.user.id);
-        console.log(token.user);
+        const dbUser = await User.findById(token.user._id);
         if (dbUser) {
           token.user = dbUser;
         }
