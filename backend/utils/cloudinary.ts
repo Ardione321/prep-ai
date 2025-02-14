@@ -9,14 +9,14 @@ cloudinary.v2.config({
 const upload_file = async (
   file: string,
   folder: string
-): Promise<{ public_id: string; url: string }> => {
+): Promise<{ id: string; url: string }> => {
   try {
     const result = await cloudinary.v2.uploader.upload(file, {
       resource_type: "auto",
       folder,
     });
     return {
-      public_id: result.public_id,
+      id: result.public_id,
       url: result.secure_url,
     };
   } catch (error) {
