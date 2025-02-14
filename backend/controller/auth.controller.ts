@@ -2,6 +2,8 @@ import dbConnect from "../config/dbConnect";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError";
 import User from "../models/user.model";
 import { delete_file, upload_file } from "../utils/cloudinary";
+import { resetPasswordHTMLTemplate } from "../utils/emailTemplate";
+import sendEmail from "../utils/sendEmail";
 
 /**
  * Register a new user with credentials.
@@ -125,5 +127,44 @@ export const updateUserPassword = catchAsyncErrors(
     await user.save();
 
     return { updated: true };
+  }
+);
+
+/**
+ * Sends a password reset request to the user. The generated
+ * token is only valid for 30 minutes.
+ * @param email - The email of the user to send the reset request to.
+ * @returns Promise indicating whether the email was sent.
+ */
+export const forgotUserPassword = catchAsyncErrors(
+  async (email: string): Promise<{ emailSent: boolean }> => {
+    await dbConnect();
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const resetToken = user.getResetPasswordToken();
+    await user.save;
+
+    const resetUrl = `${process.env.NEXTAUTH_URL}/password/reset/${resetToken}`;
+    const message = resetPasswordHTMLTemplate(user?.name, resetUrl);
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: "Prep AI Password reset request",
+        message,
+      });
+    } catch (error) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+
+      await user.save();
+      throw new Error("Email could not be sent");
+    }
+    return { emailSent: true };
   }
 );

@@ -4,8 +4,24 @@ import React from "react";
 import { Button, Input, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Logo } from "@/config/Logo";
+import { useGenericSubmitHandler } from "../form/genericSubmitHandler";
+import { forgotPassword } from "@/actions/auth.actions";
+import toast from "react-hot-toast";
 
 export default function ForgotPassword() {
+  const { handleSubmit, loading } = useGenericSubmitHandler(async (data) => {
+    const email = data.email;
+    const res = await forgotPassword(email);
+
+    if (res?.error) {
+      return toast.error(res?.error?.message);
+    }
+
+    if (res?.emailSent) {
+      return toast.success("Password reset link sent to your email");
+    }
+  });
+
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-large">
@@ -17,7 +33,11 @@ export default function ForgotPassword() {
           </p>
         </div>
 
-        <Form className="flex flex-col gap-3" validationBehavior="native">
+        <Form
+          className="flex flex-col gap-3"
+          validationBehavior="native"
+          onSubmit={handleSubmit}
+        >
           <Input
             isRequired
             classNames={{
@@ -37,6 +57,8 @@ export default function ForgotPassword() {
             color="primary"
             type="submit"
             endContent={<Icon icon="akar-icons:arrow-right" />}
+            isDisabled={loading}
+            isLoading={loading}
           >
             Send
           </Button>

@@ -4,6 +4,7 @@
  * Import authentication-related controllers from the backend.
  */
 import {
+  forgotUserPassword,
   register,
   updateUserPassword,
   updateUserProfile,
@@ -79,5 +80,17 @@ export async function updatePassword({
     userEmail,
   });
 
+  return result;
+}
+
+/**
+ * Sends a password reset request to the user. The generated
+ * token is only valid for 30 minutes.
+ *
+ * @param email - The email address of the user to send the reset request to.
+ * @returns The result of the password reset request.
+ */
+export async function forgotPassword(email: string) {
+  const result = await forgotUserPassword(email);
   return result;
 }
