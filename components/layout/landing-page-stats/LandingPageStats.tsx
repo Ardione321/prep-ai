@@ -76,7 +76,7 @@ export default function LandingPageStats() {
   return (
     <>
       <hr className="my-10" />
-      <dl className="grid w-full grid-cols-1 gap-5 md:grid-cols-3 lg:grid-cols-4">
+      <dl className="grid w-full grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         {data.map((item, index) => (
           <CircleChartCard key={index} {...item} />
         ))}
