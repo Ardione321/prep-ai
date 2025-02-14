@@ -17,6 +17,8 @@ export const register = async (
 ): Promise<{ created: boolean }> => {
   await dbConnect();
 
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
+
   const newUser = await User.create({
     name,
     email,
