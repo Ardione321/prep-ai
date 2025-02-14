@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import Footer from "@/components/layout/footer/Footer";
 import Navbar from "@/components/layout/header/Navbar";
 import HeaderAccouncement from "@/components/layout/header/HeaderAccouncement";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster position="bottom-right" reverseOrder={false} />
         <Providers
           themeProps={{
             defaultTheme: "light",

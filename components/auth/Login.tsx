@@ -6,11 +6,14 @@ import { Icon } from "@iconify/react";
 import { Logo } from "@/config/Logo";
 import { signIn } from "next-auth/react";
 import { useGenericSubmitHandler } from "../form/genericSubmitHandler";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-
   const toggleVisibility = () => setIsVisible(!isVisible);
+
+  const router = useRouter();
 
   const { handleSubmit, loading } = useGenericSubmitHandler(async (data) => {
     const res = await signIn("credentials", {
@@ -19,6 +22,15 @@ export default function Login() {
       password: data.password,
       callbackUrl: "/app/dashboard",
     });
+
+    if (res?.error) {
+      return toast.error(res?.error);
+    }
+
+    if (res?.ok) {
+      toast.success("Login successfully");
+      router.push("/app/dashboard");
+    }
   });
 
   const handleGithubLogin = async () => {

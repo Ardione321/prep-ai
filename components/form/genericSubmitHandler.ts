@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-type SubmitCallback = (data: Record<string, string>) => Promise<void>;
+type SubmitCallback = (data: Record<string, string>) => Promise<any>;
 
 export const useGenericSubmitHandler = (callback: SubmitCallback) => {
   const [loading, setLoading] = useState<boolean>(false);
