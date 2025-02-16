@@ -109,7 +109,8 @@ const options = {
         token.user = user;
       } else {
         await dbConnect();
-        const dbUser = await User.findById(token.user._id);
+        const dbUser = await User.findById(token.user.id);
+
         if (dbUser) {
           token.user = dbUser;
         }
@@ -125,7 +126,6 @@ const options = {
     },
     async session({ session, token }: any) {
       session.user = token.user;
-
       delete session.user.password;
 
       return session;
