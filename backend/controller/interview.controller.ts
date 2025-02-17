@@ -1,6 +1,8 @@
 import dbConnect from "../config/dbConnect";
+import { generateQuestionsGemini } from "../gemini/gemini";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError";
 import Interview from "../models/interview.model";
+// import { generateQuestions } from "../openai/openai";
 import { InterviewBody } from "../types/interview.types";
 import { getCurrentUser } from "../utils/auth";
 
@@ -30,7 +32,19 @@ export const createInterview = catchAsyncErrors(
       role,
     } = body;
 
-    const questions = mockQuestions(numOfQuestions);
+    const questions = await generateQuestionsGemini(
+      industry,
+      topic,
+      type,
+      role,
+      numOfQuestions,
+      duration,
+      difficulty
+    );
+
+    // console.log(data);
+
+    // const questions = mockQuestions(numOfQuestions);
 
     const newInterview = await Interview.create({
       industry,
