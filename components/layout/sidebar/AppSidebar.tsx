@@ -1,9 +1,13 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { cn, Listbox, ListboxItem } from "@heroui/react";
 import { Button, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { usePathname, useRouter } from "next/navigation";
+import { adminPages, appPages } from "@/constants/page";
+import { Key } from "@react-types/shared";
+import { getPageIconAndPath } from "@/helpers/helpers";
 
 interface IconWrapperProps {
   children: ReactNode;
@@ -22,6 +26,22 @@ export const IconWrapper = ({ children, className }: IconWrapperProps) => (
 );
 
 const AppSiderbar = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const pages = pathname?.includes("/admin") ? adminPages : appPages;
+
+  const [selectedKey, setSelectedKey] = useState<Key>(pathname);
+
+  useEffect(() => {
+    setSelectedKey(pathname);
+  }, [pathname]);
+
+  const handleAction = (key: Key) => {
+    setSelectedKey(key);
+    router.push(key?.toString());
+  };
+
   return (
     <div className="sticky top-[90px] z-10">
       <Listbox
@@ -30,7 +50,8 @@ const AppSiderbar = () => {
         itemClasses={{
           base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none h-12 data-[hover=true]:bg-default-100/80",
         }}
-        selectedKeys={["#"]}
+        selectedKeys={[selectedKey]}
+        onAction={handleAction}
       >
         <ListboxItem
           key="#"
@@ -49,18 +70,33 @@ const AppSiderbar = () => {
             </Button>
           }
         />
-        <ListboxItem
-          key="/app/interviews"
-          className={`mt-3 bg-gray-100 dark:bg-gray-800`}
-          startContent={
-            <IconWrapper className={`bg-success `}>
-              <Icon icon="carbon:document-pdf" className="text-lg " />
-            </IconWrapper>
-          }
-          textValue=""
-        >
-          Interviews
-        </ListboxItem>
+        <>
+          {pages.map((page) => (
+            <ListboxItem
+              key={page.path}
+              className={`mt-3 ${
+                selectedKey?.toString().includes(page.path)
+                  ? "bg-gray-100 dark:bg-gray-800"
+                  : ""
+              } `}
+              startContent={
+                <IconWrapper
+                  className={`bg-${
+                    getPageIconAndPath(page.path).color
+                  }/10 text-${getPageIconAndPath(page.path).color}`}
+                >
+                  <Icon
+                    icon={getPageIconAndPath(page.path).icon}
+                    className="text-lg "
+                  />
+                </IconWrapper>
+              }
+              textValue=""
+            >
+              {page.title}
+            </ListboxItem>
+          ))}
+        </>
       </Listbox>
     </div>
   );

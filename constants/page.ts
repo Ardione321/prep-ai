@@ -94,7 +94,10 @@ export const pageIcons: { [key: string]: { icon: string; color: string } } = {
   "/app/results": { icon: "tabler:report-analytics", color: "secondary" },
   "/app/invoices": { icon: "tabler:file-invoice", color: "success" },
   "/app/me/update/profile": { icon: "tabler:user-circle", color: "warning" },
-  "/app/me/update/password": { icon: "tabler:password-user", color: "default" },
+  "/app/me/update/password": {
+    icon: "tabler:password-user",
+    color: "default",
+  },
   "/app/unsubscribe": { icon: "tabler:octagon-minus", color: "danger" },
 
   "/admin/dashboard": {
