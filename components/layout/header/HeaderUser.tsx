@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -9,11 +9,28 @@ import { User } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { IUser } from "@/backend/models/user.model";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 
 const HeaderUser = ({ user }: { user: IUser }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter(); // Initialize Next.js router
+
+  const handleDropdownClose = () => {
+    setIsOpen(false);
+  };
+
+  const handleNavigation = (url: string) => {
+    router.push(url); // Navigate to the desired URL
+    handleDropdownClose(); // Close the dropdown
+  };
+
   return (
     <div className="flex items-center gap-4">
-      <Dropdown placement="bottom-start">
+      <Dropdown
+        placement="bottom-start"
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+      >
         <DropdownTrigger>
           <User
             as="button"
@@ -33,25 +50,31 @@ const HeaderUser = ({ user }: { user: IUser }) => {
             <p className="font-bold">Signed in as</p>
             <p className="font-bold text-foreground-500">{user?.email}</p>
           </DropdownItem>
+
           <DropdownItem
             key="admin_dashboard"
-            href="/admin/dashboard"
             startContent={<Icon icon="tabler:user-cog" />}
+            onPress={() => handleNavigation("/admin/dashboard")}
           >
             Admin Dashboard
           </DropdownItem>
+
           <DropdownItem
             key="app_dashboard"
-            href="/app/dashboard"
             startContent={<Icon icon="hugeicons:ai-brain-04" />}
+            onPress={() => handleNavigation("/app/dashboard")}
           >
             App Dashboard
           </DropdownItem>
+
           <DropdownItem
             key="logout"
             color="danger"
             startContent={<Icon icon="tabler:logout-2" />}
-            onPress={() => signOut()}
+            onPress={() => {
+              signOut();
+              handleDropdownClose(); // Close dropdown after logout
+            }}
           >
             Logout
           </DropdownItem>
