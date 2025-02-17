@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   Dropdown,
@@ -13,15 +14,15 @@ import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 
 const HeaderUser = ({ user }: { user: IUser }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter(); // Initialize Next.js router
+  const router = useRouter();
 
   const handleDropdownClose = () => {
     setIsOpen(false);
   };
 
   const handleNavigation = (url: string) => {
-    router.push(url); // Navigate to the desired URL
-    handleDropdownClose(); // Close the dropdown
+    router.push(url);
+    handleDropdownClose();
   };
 
   return (
@@ -54,6 +55,7 @@ const HeaderUser = ({ user }: { user: IUser }) => {
           <DropdownItem
             key="admin_dashboard"
             startContent={<Icon icon="tabler:user-cog" />}
+            href="/admin/dashboard"
             onPress={() => handleNavigation("/admin/dashboard")}
           >
             Admin Dashboard
@@ -73,7 +75,7 @@ const HeaderUser = ({ user }: { user: IUser }) => {
             startContent={<Icon icon="tabler:logout-2" />}
             onPress={() => {
               signOut();
-              handleDropdownClose(); // Close dropdown after logout
+              handleDropdownClose();
             }}
           >
             Logout
