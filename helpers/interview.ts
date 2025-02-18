@@ -7,3 +7,29 @@ export const getFirstIncompleteQuestionIndex = (questions: IQuestion[]) => {
 
   return firstIncompleteIndex !== -1 ? firstIncompleteIndex : 0;
 };
+
+export const saveAnswerToLocalStorage = (
+  interviewId: string,
+  questionId: string,
+  answer: string
+) => {
+  const key = `interview-${interviewId}-answers`;
+  const storedAnswers = JSON.parse(localStorage.getItem(key) || "{}");
+  storedAnswers[questionId] = answer;
+  localStorage.setItem(key, JSON.stringify(storedAnswers));
+};
+
+export const getAnswerFromLocalStorage = (
+  interviewId: string,
+  questionId: string
+) => {
+  const key = `interview-${interviewId}-answers`;
+  const storedAnswers = JSON.parse(localStorage.getItem(key) || "{}");
+  return storedAnswers[questionId] || "";
+};
+
+export const getAnswersFromLocalStorage = (interviewId: string) => {
+  const key = `interview-${interviewId}-answers`;
+  const storedAnswers = JSON.parse(localStorage.getItem(key) || "{}");
+  return storedAnswers;
+};
