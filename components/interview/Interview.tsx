@@ -1,36 +1,80 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Progress, Button, Alert, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { IInterview } from "@/backend/models/interview.model";
-import { getFirstIncompleteQuestionIndex } from "@/helpers/helpers";
-
+import { formatTime } from "@/helpers/helpers";
 import PromptInputWithBottomActions from "./PromptInputWithBottomActions";
+import { getFirstIncompleteQuestionIndex } from "@/helpers/interview";
+import toast from "react-hot-toast";
+import { updateInterview } from "@/actions/interview.actions";
 
 export default function Interview({ interview }: { interview: IInterview }) {
   const initialQuestionIndex = getFirstIncompleteQuestionIndex(
     interview?.questions
   );
-
   const [currentQuestionIndex, setCurrentQuestionIndex] =
     useState<number>(initialQuestionIndex);
-
   const [answer, setAnswer] = useState<string>("");
-
+  const [timeLeft, setTimeLeft] = useState<number>(interview?.durationLeft);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const currentQuestion = interview?.questions[currentQuestionIndex];
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime: number) => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+
+        if (prevTime === 10) {
+          setShowAlert(true);
+        }
+
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
   const handleAnswerChange = (value: string) => {
     setAnswer(value);
   };
 
+  const saveAnswerToDB = async (questionId: string, answer: string) => {
+    setLoading(true);
+
+    try {
+      const res = await updateInterview(
+        interview?._id,
+        timeLeft.toString(),
+        questionId,
+        answer
+      );
+
+      if (res?.error) {
+        setLoading(false);
+        return toast.error(res?.error.message);
+      }
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex h-full w-full max-w-full flex-col gap-8">
-      <Alert
-        color="danger"
-        description={"Interview is about to exit"}
-        title={"Time up!"}
-      />
+      {showAlert && (
+        <Alert
+          color="danger"
+          description={"Interview is about to exit"}
+          title={"Time up!"}
+        />
+      )}
 
       <Progress
         aria-label="Interview Progress"
@@ -52,7 +96,7 @@ export default function Interview({ interview }: { interview: IInterview }) {
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-5">
         <span className="text-lg font-semibold text-right mb-2 sm:mb-0">
-          Duration Left: 12:44
+          Duration Left: {formatTime(timeLeft)}
         </span>
         <Button
           color="danger"

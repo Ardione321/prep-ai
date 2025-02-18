@@ -1,7 +1,7 @@
 import dbConnect from "../config/dbConnect";
 import { evaluateAnswer, generateQuestionsGemini } from "../gemini/gemini";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError";
-import Interview from "../models/interview.model";
+import Interview, { IQuestion } from "../models/interview.model";
 // import { generateQuestions } from "../openai/openai";
 import { InterviewBody } from "../types/interview.types";
 import { getCurrentUser } from "../utils/auth";
@@ -99,9 +99,75 @@ export const deleteUserInterview = catchAsyncErrors(
   }
 );
 
-export const evaluteAnswer1 = catchAsyncErrors(async () => {
-  await evaluateAnswer(
-    "Describe your understanding of JSX and how it differs from regular JavaScript.  Explain its benefits in building React components.",
-    "JSX (JavaScript XML) is a syntax extension for JavaScript that allows developers to write UI components using a syntax similar to HTML. JSX makes it easier to define the structure of React components in a readable and declarative way"
-  );
-});
+export const updateInterviewDetails = catchAsyncErrors(
+  async (
+    interviewId: string,
+    durationLeft: string,
+    questionId: string,
+    answer: string,
+    completed?: boolean
+  ): Promise<{ updated: true }> => {
+    await dbConnect();
+
+    const interview = await Interview.findById(interviewId);
+
+    if (!interview) {
+      throw new Error("Interview not found");
+    }
+
+    if (answer) {
+      const questionIndex = interview?.questions?.findIndex(
+        (question: IQuestion) => question._id.toString() === questionId
+      );
+
+      if (questionIndex === -1) {
+        throw new Error("Question not found");
+      }
+
+      const question = interview?.questions[questionIndex];
+
+      let overallScore = 0;
+      let clarity = 0;
+      let relevance = 0;
+      let completeness = 0;
+      let suggestion = "No suggestion provided";
+
+      if (answer !== "pass") {
+        ({ overallScore, clarity, relevance, completeness, suggestion } =
+          await evaluateAnswer(question.question, answer));
+      }
+
+      if (!question.completed) {
+        interview.answered++;
+      }
+
+      question.answer = answer;
+      question.completed = true;
+      question.result = {
+        overallScore,
+        clarity,
+        relevance,
+        completeness,
+        suggestion,
+      };
+      interview.durationLeft = Number(durationLeft);
+    }
+
+    if (interview?.answered === interview?.question?.length) {
+      interview.status = "completed";
+    }
+
+    if (durationLeft === "0") {
+      interview.status === "completed";
+      interview.durationLeft = Number(durationLeft);
+    }
+
+    if (completed) {
+      interview.status === "completed";
+    }
+
+    await interview.save();
+
+    return { updated: true };
+  }
+);

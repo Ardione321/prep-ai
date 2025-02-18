@@ -8,10 +8,12 @@ export function getPageIconAndPath(pathname: string): {
   return pageIcons[pathname];
 }
 
-export const getFirstIncompleteQuestionIndex = (questions: IQuestion[]) => {
-  const firstIncompleteIndex = questions.findIndex(
-    (question) => !question?.completed
-  );
+export const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
 
-  return firstIncompleteIndex !== -1 ? firstIncompleteIndex : 0;
+  // Display minutes:remainingSeconds
+  return `${minutes?.toString().padStart(2, "0")}: ${remainingSeconds
+    .toString()
+    .padStart(2, "0")}`;
 };
