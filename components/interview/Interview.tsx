@@ -7,6 +7,7 @@ import { IInterview, IQuestion } from "@/backend/models/interview.model";
 import { formatTime } from "@/helpers/helpers";
 import PromptInputWithBottomActions from "./PromptInputWithBottomActions";
 import {
+  getAnswerFromLocalStorage,
   getAnswersFromLocalStorage,
   getFirstIncompleteQuestionIndex,
   saveAnswerToLocalStorage,
@@ -64,6 +65,7 @@ export default function Interview({ interview }: { interview: IInterview }) {
 
     return () => clearInterval(timer);
   }, []);
+
   const handleAnswerChange = (value: string) => {
     setAnswer(value);
   };
@@ -87,6 +89,38 @@ export default function Interview({ interview }: { interview: IInterview }) {
       setLoading(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNextQuestion = async (answer: string) => {
+    const previousAnswer = answers[currentQuestion?._id];
+
+    if (previousAnswer !== answer && answer !== "") {
+      await saveAnswerToDB(currentQuestion?._id, answer);
+      saveAnswerToLocalStorage(interview?._id, currentQuestion?._id, answer);
+    }
+    setAnswers((prevAnswers) => {
+      const newAnswers = { ...prevAnswers };
+      newAnswers[currentQuestion?._id] = answer;
+      return newAnswers;
+    });
+
+    if (currentQuestionIndex < interview?.numOfQuestions - 1) {
+      setCurrentQuestionIndex((prevIndex) => {
+        const newIndex = prevIndex + 1;
+        const nextQuestion = interview?.questions[newIndex];
+        setAnswer(getAnswerFromLocalStorage(interview?._id, nextQuestion?._id));
+
+        return newIndex;
+      });
+    } else if (currentQuestionIndex === interview?.numOfQuestions - 1) {
+      // User in on last question then move user to 1st question
+      setCurrentQuestionIndex(0);
+      setAnswer(
+        getAnswerFromLocalStorage(interview?._id, interview?.questions[0]?._id)
+      );
+    } else {
+      setAnswer("");
     }
   };
 
@@ -190,6 +224,9 @@ export default function Interview({ interview }: { interview: IInterview }) {
               width={20}
             />
           }
+          onPress={() => handleNextQuestion(answer)}
+          isDisabled={loading}
+          isLoading={loading}
         >
           Next
         </Button>
