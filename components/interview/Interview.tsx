@@ -3,10 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { Progress, Button, Alert, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { IInterview } from "@/backend/models/interview.model";
+import { IInterview, IQuestion } from "@/backend/models/interview.model";
 import { formatTime } from "@/helpers/helpers";
 import PromptInputWithBottomActions from "./PromptInputWithBottomActions";
-import { getFirstIncompleteQuestionIndex } from "@/helpers/interview";
+import {
+  getAnswersFromLocalStorage,
+  getFirstIncompleteQuestionIndex,
+  saveAnswerToLocalStorage,
+} from "@/helpers/interview";
 import toast from "react-hot-toast";
 import { updateInterview } from "@/actions/interview.actions";
 
@@ -16,11 +20,31 @@ export default function Interview({ interview }: { interview: IInterview }) {
   );
   const [currentQuestionIndex, setCurrentQuestionIndex] =
     useState<number>(initialQuestionIndex);
+  const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [answer, setAnswer] = useState<string>("");
   const [timeLeft, setTimeLeft] = useState<number>(interview?.durationLeft);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const currentQuestion = interview?.questions[currentQuestionIndex];
+
+  useEffect(() => {
+    // Load answer from local storage
+    const storedAnswers = getAnswersFromLocalStorage(interview?._id);
+
+    if (storedAnswers) {
+      setAnswers(storedAnswers);
+    } else {
+      interview?.questions.forEach((question: IQuestion) => {
+        if (question?.completed) {
+          saveAnswerToLocalStorage(
+            interview?._id,
+            question?._id,
+            question?.answer
+          );
+        }
+      });
+    }
+  }, [interview?._id]);
 
   useEffect(() => {
     const timer = setInterval(() => {

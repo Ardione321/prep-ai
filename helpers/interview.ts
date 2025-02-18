@@ -30,6 +30,6 @@ export const getAnswerFromLocalStorage = (
 
 export const getAnswersFromLocalStorage = (interviewId: string) => {
   const key = `interview-${interviewId}-answers`;
-  const storedAnswers = JSON.parse(localStorage.getItem(key) || "{}");
-  return storedAnswers;
+  const storedAnswers = localStorage.getItem(key);
+  return storedAnswers ? JSON.parse(storedAnswers) : null;
 };
