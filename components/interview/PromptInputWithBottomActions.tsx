@@ -6,7 +6,19 @@ import { Icon } from "@iconify/react";
 
 import PromptInput from "./PromptInput";
 
-export default function PromptInputWithBottomActions() {
+export default function PromptInputWithBottomActions({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [prompt, setPrompt] = useState<string>(value);
+  const handleValueChange = (value: string) => {
+    setPrompt(value);
+    onChange(value);
+  };
+
   return (
     <div className="flex w-full flex-col gap-4">
       <form className="flex w-full flex-col items-start rounded-medium bg-default-100 transition-colors hover:bg-default-200/70">
@@ -18,8 +30,9 @@ export default function PromptInputWithBottomActions() {
           }}
           minRows={3}
           radius="lg"
-          value={"prompt"}
+          value={prompt}
           variant="flat"
+          onValueChange={handleValueChange}
         />
         <div className="flex w-full items-center justify-between gap-2 overflow-scroll px-4 pb-4">
           <div className="flex w-full gap-1 md:gap-3">
@@ -37,7 +50,9 @@ export default function PromptInputWithBottomActions() {
               Type with Voice
             </Button>
           </div>
-          <p className="py-1 text-tiny text-default-400">Chars:45</p>
+          <p className="py-1 text-tiny text-default-400">
+            Chars:{prompt?.length}
+          </p>
         </div>
       </form>
     </div>
