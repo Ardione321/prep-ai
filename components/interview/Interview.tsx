@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Progress, Button, Alert, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { IInterview } from "@/backend/models/interview.model";
+import { getFirstIncompleteQuestionIndex } from "@/helpers/helpers";
 
-import PromptInputWithBottomActions from "./PromptInputWithBottomActions";
+// import PromptInputWithBottomActions from "./PromptInputWithBottomActions";
 
-export default function Interview() {
+export default function Interview({ interview }: { interview: IInterview }) {
+  const initialQuestionIndex = getFirstIncompleteQuestionIndex(
+    interview?.questions
+  );
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+
+  const currentQuestion = interview?.questions[currentQuestionIndex];
   return (
     <div className="flex h-full w-full max-w-full flex-col gap-8">
       <Alert
@@ -48,13 +57,13 @@ export default function Interview() {
 
       <span className="text-center">
         <span
-          className={`tracking-tight inline font-semibold bg-clip-text text-transparent bg-gradient-to-b from-[#FF1CF7] to-[#b249f8] text-[1.4rem] lg:text-2.5xl flex items-center justify-center h-full`}
+          className={`tracking-tight font-semibold bg-clip-text text-transparent bg-gradient-to-b from-[#FF1CF7] to-[#b249f8] text-[1.4rem] lg:text-2.5xl flex items-center justify-center h-full`}
         >
-          Question Here
+          {currentQuestion?.question}
         </span>
       </span>
 
-      <PromptInputWithBottomActions />
+      {/* <PromptInputWithBottomActions /> */}
 
       <div className="flex justify-between items-center mt-5">
         <Button

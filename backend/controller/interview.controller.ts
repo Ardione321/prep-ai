@@ -76,6 +76,14 @@ export const getInterviews = catchAsyncErrors(async (request: Request) => {
   return { interviews };
 });
 
+export const getInterviewById = catchAsyncErrors(async (id: string) => {
+  await dbConnect();
+
+  const interview = await Interview.findById(id);
+
+  return { interview };
+});
+
 export const deleteUserInterview = catchAsyncErrors(
   async (interviewId: string): Promise<{ deleted: true }> => {
     await dbConnect();
