@@ -51,12 +51,11 @@ export const generateQuestions = async (
   });
 
   const content = response?.choices[0]?.message.content;
-  console.log(content);
+
   if (!content) {
     throw new Error("Failed to generate questions");
   }
 
-  console.log(content);
 };
 
 export const evaluateAnswer = async () => {};

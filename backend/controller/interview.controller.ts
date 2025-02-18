@@ -1,5 +1,5 @@
 import dbConnect from "../config/dbConnect";
-import { generateQuestionsGemini } from "../gemini/gemini";
+import { evaluateAnswer, generateQuestionsGemini } from "../gemini/gemini";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError";
 import Interview from "../models/interview.model";
 // import { generateQuestions } from "../openai/openai";
@@ -90,3 +90,10 @@ export const deleteUserInterview = catchAsyncErrors(
     return { deleted: true };
   }
 );
+
+export const evaluteAnswer1 = catchAsyncErrors(async () => {
+  await evaluateAnswer(
+    "Describe your understanding of JSX and how it differs from regular JavaScript.  Explain its benefits in building React components.",
+    "JSX (JavaScript XML) is a syntax extension for JavaScript that allows developers to write UI components using a syntax similar to HTML. JSX makes it easier to define the structure of React components in a readable and declarative way"
+  );
+});
