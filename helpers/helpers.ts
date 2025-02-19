@@ -1,4 +1,3 @@
-import { IQuestion } from "@/backend/models/interview.model";
 import { pageIcons } from "@/constants/page";
 
 export function getPageIconAndPath(pathname: string): {
