@@ -124,6 +124,10 @@ export default function Interview({ interview }: { interview: IInterview }) {
     }
   };
 
+  const handlePassQuestion = async () => {
+    await handleNextQuestion("pass");
+  };
+
   return (
     <div className="flex h-full w-full max-w-full flex-col gap-8">
       {showAlert && (
@@ -138,9 +142,11 @@ export default function Interview({ interview }: { interview: IInterview }) {
         aria-label="Interview Progress"
         className="w-full"
         color="default"
-        label={`Question 1 of 10`}
+        label={`Question ${currentQuestionIndex + 1} of ${
+          interview?.numOfQuestions
+        }`}
         size="md"
-        value={4}
+        value={((currentQuestionIndex + 1) / interview?.numOfQuestions) * 100}
       />
       <div className="flex flex-wrap gap-1.5">
         <Chip
@@ -208,6 +214,9 @@ export default function Interview({ interview }: { interview: IInterview }) {
               width={18}
             />
           }
+          onPress={() => handlePassQuestion()}
+          isDisabled={loading}
+          isLoading={loading}
         >
           Pass
         </Button>
