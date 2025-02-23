@@ -128,6 +128,20 @@ export default function Interview({ interview }: { interview: IInterview }) {
     await handleNextQuestion("pass");
   };
 
+  const handlePreviousQuestion = async () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prevIndex) => {
+        const newIndex = prevIndex - 1;
+        const previousQuestion = interview?.questions[newIndex];
+        setAnswer(
+          getAnswerFromLocalStorage(interview?._id, previousQuestion?._id)
+        );
+
+        return newIndex;
+      });
+    }
+  };
+
   return (
     <div className="flex h-full w-full max-w-full flex-col gap-8">
       {showAlert && (
@@ -198,6 +212,9 @@ export default function Interview({ interview }: { interview: IInterview }) {
               width={20}
             />
           }
+          onPress={() => handlePreviousQuestion()}
+          isDisabled={loading || currentQuestionIndex === 0}
+          isLoading={loading}
         >
           Previous
         </Button>
