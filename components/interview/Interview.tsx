@@ -163,14 +163,22 @@ export default function Interview({ interview }: { interview: IInterview }) {
         value={((currentQuestionIndex + 1) / interview?.numOfQuestions) * 100}
       />
       <div className="flex flex-wrap gap-1.5">
-        <Chip
-          color={"success"}
-          size="sm"
-          variant="flat"
-          className="font-bold cursor-pointer text-sm radius-full"
-        >
-          1
-        </Chip>
+        {interview?.questions.map((question: IQuestion, index: number) => (
+          <Chip
+            color={answers[question?._id] ? "success" : "default"}
+            size="sm"
+            variant="flat"
+            className="font-bold cursor-pointer text-sm radius-full"
+            onClick={() => {
+              setCurrentQuestionIndex(index);
+              setAnswer(
+                getAnswerFromLocalStorage(interview?._id, question?._id)
+              );
+            }}
+          >
+            {index + 1}
+          </Chip>
+        ))}
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-5">
         <span className="text-lg font-semibold text-right mb-2 sm:mb-0">
@@ -185,7 +193,7 @@ export default function Interview({ interview }: { interview: IInterview }) {
         </Button>
       </div>
 
-      <span className="text-center">
+      <span className="text-center h-40">
         <span
           className={`tracking-tight font-semibold bg-clip-text text-transparent bg-gradient-to-b from-[#FF1CF7] to-[#b249f8] text-[1.4rem] lg:text-2.5xl flex items-center justify-center h-full`}
         >
