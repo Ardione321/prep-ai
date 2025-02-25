@@ -14,6 +14,7 @@ import {
 } from "@/helpers/interview";
 import toast from "react-hot-toast";
 import { updateInterview } from "@/actions/interview.actions";
+import { useRouter } from "next/navigation";
 
 export default function Interview({ interview }: { interview: IInterview }) {
   const initialQuestionIndex = getFirstIncompleteQuestionIndex(
@@ -27,6 +28,14 @@ export default function Interview({ interview }: { interview: IInterview }) {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const currentQuestion = interview?.questions[currentQuestionIndex];
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      handleExitInterview();
+    }
+  }, [timeLeft]);
 
   useEffect(() => {
     // Load answer from local storage
@@ -142,6 +151,34 @@ export default function Interview({ interview }: { interview: IInterview }) {
     }
   };
 
+  const handleExitInterview = async () => {
+    setLoading(true);
+
+    try {
+      const res = await updateInterview(
+        interview?._id,
+        timeLeft.toString(),
+        currentQuestion?._id,
+        answer,
+        true
+      );
+
+      if (res?.error) {
+        setLoading(false);
+        return toast.error(res?.error.message);
+      }
+
+      if (res?.updated) {
+        setLoading(false);
+        router.push("/app/interviews");
+      }
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex h-full w-full max-w-full flex-col gap-8">
       {showAlert && (
@@ -165,6 +202,7 @@ export default function Interview({ interview }: { interview: IInterview }) {
       <div className="flex flex-wrap gap-1.5">
         {interview?.questions.map((question: IQuestion, index: number) => (
           <Chip
+            key={question?._id}
             color={answers[question?._id] ? "success" : "default"}
             size="sm"
             variant="flat"
@@ -188,6 +226,9 @@ export default function Interview({ interview }: { interview: IInterview }) {
           color="danger"
           startContent={<Icon icon="solar:exit-outline" fontSize={18} />}
           variant="solid"
+          onPress={handleExitInterview}
+          isLoading={loading}
+          isDisabled={loading}
         >
           Save & Exit Interview
         </Button>

@@ -137,7 +137,7 @@ export const updateInterviewDetails = catchAsyncErrors(
           await evaluateAnswer(question.question, answer));
       }
 
-      if (!question.completed) {
+      if (!question?.completed) {
         interview.answered++;
       }
 
@@ -153,17 +153,17 @@ export const updateInterviewDetails = catchAsyncErrors(
       interview.durationLeft = Number(durationLeft);
     }
 
-    if (interview?.answered === interview?.question?.length) {
+    if (interview?.answered === interview?.questions?.length) {
       interview.status = "completed";
     }
 
     if (durationLeft === "0") {
-      interview.status === "completed";
+      interview.status = "completed";
       interview.durationLeft = Number(durationLeft);
     }
 
     if (completed) {
-      interview.status === "completed";
+      interview.status = "completed";
     }
 
     await interview.save();

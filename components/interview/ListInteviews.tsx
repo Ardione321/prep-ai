@@ -36,7 +36,7 @@ interface ListInterviewProps {
 
 export default function ListInterviews({ data }: ListInterviewProps) {
   const { interviews } = data;
-
+  console.log(interviews);
   const router = useRouter();
   const deleteInterviewHandler = async (interviewId: string) => {
     const res = await deleleInterview(interviewId);
@@ -50,9 +50,9 @@ export default function ListInterviews({ data }: ListInterviewProps) {
       router.push("/app/interviews");
     }
   };
+
   const renderCell = useCallback((interview: IInterview, columnKey: Key) => {
     const cellValue = interview[columnKey as keyof IInterview];
-
     switch (columnKey) {
       case "interview":
         return (
