@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { deleleInterview } from "@/actions/interview.actions";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { calculateAverageScore } from "@/helpers/interview";
 
 export const columns = [
   { name: "INTERVIEW", uid: "interview" },
@@ -66,7 +67,10 @@ export default function ListInterviews({ data }: ListInterviewProps) {
       case "result":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">0/10</p>
+            <p className="text-bold text-sm capitalize">
+              {" "}
+              {calculateAverageScore(interview?.questions)} / 10
+            </p>
             <p className="text-bold text-sm capitalize text-default-400">
               {interview?.numOfQuestions} questions
             </p>
@@ -88,7 +92,7 @@ export default function ListInterviews({ data }: ListInterviewProps) {
           <>
             {interview?.answered === 0 && interview?.status !== "completed" ? (
               <Button
-                className="bg-foreground font-medium text-background w-full"
+                className="bg-foreground font-medium text-background"
                 color="secondary"
                 endContent={
                   <Icon icon="solar:arrow-right-linear" fontSize={20} />
@@ -100,7 +104,7 @@ export default function ListInterviews({ data }: ListInterviewProps) {
                 Start
               </Button>
             ) : (
-              <div className="relative flex items-center gap-2">
+              <div className="relative flex items-center justify-center gap-2">
                 {interview?.status !== "completed" && (
                   <Tooltip color="danger" content="Continue Interview">
                     <span className="text-lg text-danger cursor-pointer active:opacity-50">
