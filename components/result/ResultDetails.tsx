@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-
 import ResultStats from "./ResultStats";
 import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { IInterview } from "@/backend/models/interview.model";
-// import QuestionCard from "./QuestionCard";
+import QuestionCard from "./QuestionCard";
 
 export default function ResultDetails({
   interview,
@@ -52,8 +51,9 @@ export default function ResultDetails({
               </Chip>
             </div>
           </div>
-
-          {/* <QuestionCard /> */}
+          {interview?.questions.map((question, index) => (
+            <QuestionCard key={index} index={index} question={question} />
+          ))}
 
           <div className="flex justify-center items-center mt-10"></div>
         </div>

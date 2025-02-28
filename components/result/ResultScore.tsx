@@ -3,26 +3,33 @@
 import React from "react";
 import { Card, Progress } from "@heroui/react";
 
-export default function ResultScore() {
+type ResultProps = {
+  overallScore: number;
+  clarity: number;
+  relevance: number;
+  completeness: number;
+};
+
+export default function ResultScore({ result }: { result: ResultProps }) {
   const data = [
     {
       title: "Overall Score",
-      value: 5,
+      value: result?.overallScore,
       status: "good",
     },
     {
       title: "Clarity",
-      value: 4,
+      value: result?.clarity,
       status: "warn",
     },
     {
       title: "Relevance",
-      value: 4,
+      value: result?.relevance,
       status: "warn",
     },
     {
       title: "Completeness",
-      value: 6,
+      value: result?.completeness,
       status: "warn",
     },
   ];
