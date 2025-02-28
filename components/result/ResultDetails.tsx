@@ -5,13 +5,18 @@ import React, { useRef, useState } from "react";
 import ResultStats from "./ResultStats";
 import { Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import QuestionCard from "./QuestionCard";
+import { IInterview } from "@/backend/models/interview.model";
+// import QuestionCard from "./QuestionCard";
 
-export default function ResultDetails() {
+export default function ResultDetails({
+  interview,
+}: {
+  interview: IInterview;
+}) {
   return (
     <div>
       <div className="px-5">
-        <ResultStats />
+        <ResultStats interview={interview} />
 
         <div className="w-full flex flex-col gap-3">
           <div className="flex flex-col md:flex-row justify-between items-center my-5 gap-4">
@@ -23,7 +28,7 @@ export default function ResultDetails() {
                 }
                 variant="faded"
               >
-                Software Development
+                {interview?.industry}
               </Chip>
 
               <Chip
@@ -33,7 +38,7 @@ export default function ResultDetails() {
                 }
                 variant="faded"
               >
-                Technical
+                {interview?.type}
               </Chip>
 
               <Chip
@@ -43,12 +48,12 @@ export default function ResultDetails() {
                 }
                 variant="faded"
               >
-                React
+                {interview?.topic}
               </Chip>
             </div>
           </div>
 
-          <QuestionCard />
+          {/* <QuestionCard /> */}
 
           <div className="flex justify-center items-center mt-10"></div>
         </div>

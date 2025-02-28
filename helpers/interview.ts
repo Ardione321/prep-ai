@@ -44,3 +44,14 @@ export const calculateAverageScore = (questions: IQuestion[]) => {
 
   return (totalScore / questions?.length).toFixed(1);
 };
+
+export const calculateDuration = (duration: number, durationLeft: number) => {
+  const durationUsedInMinutes = ((duration - durationLeft) / 60).toFixed(0);
+  const totalDurationInMinutes = (duration / 60).toFixed(0);
+
+  return {
+    total: parseInt(totalDurationInMinutes),
+    strValue: `${durationUsedInMinutes} / ${totalDurationInMinutes} min`,
+    chartDataValue: parseFloat(durationUsedInMinutes),
+  };
+};
