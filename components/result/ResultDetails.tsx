@@ -2,16 +2,35 @@
 
 import React, { useRef, useState } from "react";
 import ResultStats from "./ResultStats";
-import { Chip } from "@heroui/react";
+import { Chip, Pagination } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { IInterview } from "@/backend/models/interview.model";
 import QuestionCard from "./QuestionCard";
+import { getTotalPages, paginate } from "@/helpers/helpers";
 
 export default function ResultDetails({
   interview,
 }: {
   interview: IInterview;
 }) {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const questionPerPage = 2;
+  const questionIndex = (currentPage - 1) * questionPerPage;
+  const totalPages = getTotalPages(
+    interview?.questions.length,
+    questionPerPage
+  );
+
+  const currentQuestions = paginate(
+    interview?.questions,
+    currentPage,
+    questionPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div>
       <div className="px-5">
@@ -51,9 +70,26 @@ export default function ResultDetails({
               </Chip>
             </div>
           </div>
-          {interview?.questions.map((question, index) => (
-            <QuestionCard key={index} index={index} question={question} />
+
+          {currentQuestions.map((question, index) => (
+            <QuestionCard
+              key={index}
+              index={questionIndex + index}
+              question={question}
+            />
           ))}
+
+          <div className="flex justify-center items-center mt-10">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              initialPage={1}
+              total={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+            />
+          </div>
 
           <div className="flex justify-center items-center mt-10"></div>
         </div>
