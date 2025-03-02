@@ -4,7 +4,9 @@ import { catchAsyncErrors } from "../middlewares/catchAsyncError";
 import Interview, { IQuestion } from "../models/interview.model";
 // import { generateQuestions } from "../openai/openai";
 import { InterviewBody } from "../types/interview.types";
+import APIFilters from "../utils/apiFilters";
 import { getCurrentUser } from "../utils/auth";
+import { getQueryString } from "../utils/utils";
 
 const mockQuestions = (numOfQuestions: number) => {
   const questions = [];
@@ -42,10 +44,6 @@ export const createInterview = catchAsyncErrors(
       difficulty
     );
 
-    // console.log(data);
-
-    // const questions = mockQuestions(numOfQuestions);
-
     const newInterview = await Interview.create({
       industry,
       type,
@@ -71,7 +69,14 @@ export const getInterviews = catchAsyncErrors(async (request: Request) => {
   // const session = await getServerSession(authOptions);
   await dbConnect();
   const user = await getCurrentUser(request);
-  const interviews = await Interview.find({ user: user?._id });
+  const { searchParams } = new URL(request.url);
+
+  const queryString = getQueryString(searchParams);
+
+  queryString.user = user?._id;
+
+  const apiFilters = new APIFilters(Interview, queryString).filter();
+  const interviews = await apiFilters.query;
 
   return { interviews };
 });

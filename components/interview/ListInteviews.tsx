@@ -37,7 +37,6 @@ interface ListInterviewProps {
 
 export default function ListInterviews({ data }: ListInterviewProps) {
   const { interviews } = data;
-  console.log(interviews);
   const router = useRouter();
   const deleteInterviewHandler = async (interviewId: string) => {
     const res = await deleleInterview(interviewId);
