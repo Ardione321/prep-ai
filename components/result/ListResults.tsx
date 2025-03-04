@@ -9,14 +9,15 @@ import {
   TableRow,
   TableCell,
   Chip,
-  Tooltip,
   Button,
+  Select,
+  SelectItem,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Key } from "@react-types/shared";
-import toast from "react-hot-toast";
 import Link from "next/link";
 import { calculateAverageScore } from "@/helpers/interview";
+import { useRouter } from "next/navigation";
 
 type Props = {
   data: {
@@ -32,6 +33,9 @@ export const columns = [
 ];
 const ListResults = ({ data }: Props) => {
   const { interviews } = data;
+
+  const router = useRouter();
+
   const renderCell = useCallback((interview: IInterview, columnKey: Key) => {
     const cellValue = interview[columnKey as keyof IInterview];
     switch (columnKey) {
@@ -86,8 +90,37 @@ const ListResults = ({ data }: Props) => {
     }
   }, []);
 
+  let queryParams;
+  const handleStatusChange = (status: string) => {
+    queryParams = new URLSearchParams(window.location.search);
+
+    if (queryParams.has("status") && status === "all") {
+      queryParams.delete("status");
+    } else if (queryParams.has("status")) {
+      queryParams.set("status", status);
+    } else {
+      queryParams.append("status", status);
+    }
+
+    const path = `${window.location.pathname}?${queryParams.toString()}`;
+
+    router.push(path);
+  };
+
   return (
     <div className="my-4">
+      <div className="flex justify-end items-center mb-4">
+        <Select
+          size="sm"
+          className="max-w-xs"
+          label="Select a status"
+          onChange={(event) => handleStatusChange(event.target.value)}
+        >
+          <SelectItem key={"all"}>All</SelectItem>
+          <SelectItem key={"pending"}>Pending</SelectItem>
+          <SelectItem key={"completed"}>Completed</SelectItem>
+        </Select>
+      </div>
       <Table aria-label="Interviews table">
         <TableHeader columns={columns}>
           {(column) => (

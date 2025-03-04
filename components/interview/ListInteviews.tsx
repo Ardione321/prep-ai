@@ -13,6 +13,8 @@ import {
   Chip,
   Tooltip,
   Button,
+  Select,
+  SelectItem,
 } from "@heroui/react";
 import { IInterview } from "@/backend/models/interview.model";
 import { Key } from "@react-types/shared";
@@ -137,8 +139,37 @@ export default function ListInterviews({ data }: ListInterviewProps) {
     }
   }, []);
 
+  let queryParams;
+  const handleStatusChange = (status: string) => {
+    queryParams = new URLSearchParams(window.location.search);
+
+    if (queryParams.has("status") && status === "all") {
+      queryParams.delete("status");
+    } else if (queryParams.has("status")) {
+      queryParams.set("status", status);
+    } else {
+      queryParams.append("status", status);
+    }
+
+    const path = `${window.location.pathname}?${queryParams.toString()}`;
+
+    router.push(path);
+  };
+
   return (
     <div className="my-4">
+      <div className="flex justify-end items-center mb-4">
+        <Select
+          size="sm"
+          className="max-w-xs"
+          label="Select a status"
+          onChange={(event) => handleStatusChange(event.target.value)}
+        >
+          <SelectItem key={"all"}>All</SelectItem>
+          <SelectItem key={"pending"}>Pending</SelectItem>
+          <SelectItem key={"completed"}>Completed</SelectItem>
+        </Select>
+      </div>
       <Table aria-label="Interviews table">
         <TableHeader columns={columns}>
           {(column) => (
