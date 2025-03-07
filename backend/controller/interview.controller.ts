@@ -1,7 +1,7 @@
 import dbConnect from "../config/dbConnect";
 import { evaluateAnswer, generateQuestionsGemini } from "../gemini/gemini";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError";
-import Interview, { IQuestion } from "../models/interview.model";
+import Interview, { IInterview, IQuestion } from "../models/interview.model";
 // import { generateQuestions } from "../openai/openai";
 import { InterviewBody } from "../types/interview.types";
 import APIFilters from "../utils/apiFilters";
@@ -69,6 +69,7 @@ export const getInterviews = catchAsyncErrors(async (request: Request) => {
   // const session = await getServerSession(authOptions);
   await dbConnect();
   const user = await getCurrentUser(request);
+  const resPerPage: number = 1;
   const { searchParams } = new URL(request.url);
 
   const queryString = getQueryString(searchParams);
@@ -76,9 +77,14 @@ export const getInterviews = catchAsyncErrors(async (request: Request) => {
   queryString.user = user?._id;
 
   const apiFilters = new APIFilters(Interview, queryString).filter();
-  const interviews = await apiFilters.query;
+  let interviews: IInterview[] = await apiFilters.query.clone();
+  const filteredCount: number = interviews.length;
 
-  return { interviews };
+  apiFilters.pagination(resPerPage);
+  interviews = await apiFilters.query;
+  // const interviews = await apiFilters.query;
+
+  return { interviews, resPerPage, filteredCount };
 });
 
 export const getInterviewById = catchAsyncErrors(async (id: string) => {

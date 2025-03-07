@@ -23,6 +23,7 @@ import { deleleInterview } from "@/actions/interview.actions";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { calculateAverageScore } from "@/helpers/interview";
+import CustomPagination from "../layout/pagination/CustomPagination";
 
 export const columns = [
   { name: "INTERVIEW", uid: "interview" },
@@ -34,11 +35,13 @@ export const columns = [
 interface ListInterviewProps {
   data: {
     interviews: IInterview[];
+    resPerPage: number;
+    filteredCount: number;
   };
 }
 
 export default function ListInterviews({ data }: ListInterviewProps) {
-  const { interviews } = data;
+  const { interviews, resPerPage, filteredCount } = data;
   const router = useRouter();
   const deleteInterviewHandler = async (interviewId: string) => {
     const res = await deleleInterview(interviewId);
@@ -191,6 +194,13 @@ export default function ListInterviews({ data }: ListInterviewProps) {
           )}
         </TableBody>
       </Table>
+
+      <div className="flex justify-center items-center mt-10">
+        <CustomPagination
+          resPerPage={resPerPage}
+          filteredCount={filteredCount}
+        />
+      </div>
     </div>
   );
 }

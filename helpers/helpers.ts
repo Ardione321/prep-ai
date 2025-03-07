@@ -17,11 +17,8 @@ export const formatTime = (seconds: number) => {
     .padStart(2, "0")}`;
 };
 
-export const getTotalPages = (
-  totalQuestions: number,
-  questionPerPage: number
-) => {
-  return Math.ceil(totalQuestions / questionPerPage);
+export const getTotalPages = (totalItems: number, itemsPerPage: number) => {
+  return Math.ceil(totalItems / itemsPerPage);
 };
 
 export const paginate = <T>(
@@ -33,4 +30,17 @@ export const paginate = <T>(
   const endIndex = startIndex + itemsPerPage;
 
   return data?.slice(startIndex, endIndex);
+};
+
+export const updateSearchParams = (
+  queryParams: URLSearchParams,
+  key: string,
+  value: string
+) => {
+  if (queryParams.has(key)) {
+    queryParams.set(key, value);
+  } else {
+    queryParams.append(key, value);
+  }
+  return queryParams;
 };
