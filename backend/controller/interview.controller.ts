@@ -77,12 +77,12 @@ export const getInterviews = catchAsyncErrors(async (request: Request) => {
   queryString.user = user?._id;
 
   const apiFilters = new APIFilters(Interview, queryString).filter();
+
   let interviews: IInterview[] = await apiFilters.query.clone();
   const filteredCount: number = interviews.length;
 
-  apiFilters.pagination(resPerPage);
+  apiFilters.pagination(resPerPage).sort();
   interviews = await apiFilters.query;
-  // const interviews = await apiFilters.query;
 
   return { interviews, resPerPage, filteredCount };
 });

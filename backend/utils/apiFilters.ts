@@ -26,6 +26,11 @@ class APIFilters {
 
     return this;
   }
+
+  sort() {
+    this.query = this.query.sort("-createdAt");
+    return this;
+  }
 }
 
 export default APIFilters;
