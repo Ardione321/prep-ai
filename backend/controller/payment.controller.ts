@@ -14,12 +14,12 @@ export const createSubscription = catchAsyncErrors(
       },
     });
 
-    const subcription = await stripe.subscriptions.create({
+    const subscription = await stripe.subscriptions.create({
       customer: customer?.id,
       items: [{ price: "price_1R1VFrGCuN0BKWpq9EcJDDUy" }],
       expand: ["latest_invoice.payment_intent"],
     });
 
-    return { subcription };
+    return { subscription };
   }
 );
